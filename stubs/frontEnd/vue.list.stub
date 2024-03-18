@@ -1,0 +1,199 @@
+<template>
+    <section
+        id="dummyVariablePlural"
+        class="mt-20"
+    >
+        <el-button
+            type="primary"
+            icon="plus"
+            class="float-left"
+            @click="handleAdd"
+        >
+            Add
+        </el-button>
+        <base-filter
+            v-model="filters"
+            class="float-right"
+        />
+        <!-- table -->
+        <el-table
+            v-loading="loading"
+            :data="items"
+            highlight-current-row
+            class="w-100"
+            @sort-change="handleSortChange"
+            @filter-change="fetchAll(params)"
+        >
+            <el-table-column
+                prop="id"
+                label="Id"
+                width="80"
+            />
+            <el-table-column
+                prop="name"
+                label="Name"
+                min-width="200"
+                sortable
+            >
+                <template #default="scope">
+                    <router-link :to="{name: 'Show DummySingular', params: {id: scope.row.id}}">
+                        {{ scope.row.name }}
+                    </router-link>
+                </template>
+            </el-table-column>
+            <el-table-column
+                sortable
+                prop="updated_at"
+                label="Updated"
+                width="120"
+            >
+                <template #default="scope">
+                    {{ $filters.date(scope.row.updated_at) }}
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="Actions"
+                width="130"
+                align="right"
+            >
+                <template #default="scope">
+                    <el-tooltip
+                        :show-after="300"
+                        :content="$t('global.edit')"
+                        placement="top"
+                    >
+                        <span>
+                            <el-button
+                                size="small"
+                                class="ml-10"
+                                @click="handleEdit(scope.row)"
+                            >
+                                <i class="fas fa-pencil-alt" />
+                            </el-button>
+                        </span>
+                    </el-tooltip>
+                    <el-tooltip
+                        :show-after="300"
+                        :content="$t('global.delete')"
+                        placement="top"
+                    >
+                        <span>
+                            <el-button
+                                type="danger"
+                                size="small"
+                                plain
+                                class="ml-10"
+                                @click="handleDelete(scope.row)"
+                            >
+                                <i class="fa fa-trash" />
+                            </el-button>
+                        </span>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!-- pagination -->
+        <el-pagination
+            v-model:current-dummyVariableSingular="dummyVariableSingular"
+            v-model:dummyVariableSingular-size="dummyVariableSingularSize"
+            :total="meta.total || 0"
+            small
+            layout="total, sizes, prev, dummyVariableSingularr, next"
+            class="float-right mt-20 mb-20"
+            @size-change="fetchAll(params)"
+            @current-change="fetchAll(params)"
+        />
+
+        <!-- form dialog -->
+        <el-dialog
+            v-model="formVisible"
+            :title="formTitle"
+            destroy-on-close
+        >
+            <DummySingularForm
+                :initial-form="formData"
+                @saved="saved"
+                @cancel="formVisible = false"
+            />
+        </el-dialog>
+    </section>
+</template>
+
+<script setup>
+import {computed, ref, watch} from 'vue'
+import dummyVariableSingularApi from '../dummyVariableSingularApi'
+import DummySingularForm from './DummySingularForm.vue'
+import {storeToRefs} from 'pinia'
+import {useDummySingularStore} from '@/modules/dummyVariableSingular/dummyVariableSingularStore'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import BaseFilter from '@/base/components/filters/BaseFilter.vue'
+
+const sortBy = ref('id,asc')
+const filters = ref({search: ''})
+const dummyVariableSingular = ref(1)
+const dummyVariableSingularSize = ref(10)
+const formVisible = ref(false)
+const formTitle = ref('New DummySingular')
+const formData = ref(null)
+
+const { items, meta, loading } = storeToRefs(useDummySingularStore())
+const { fetchAll } = useDummySingularStore()
+
+const params = computed(() => ({
+    dummyVariableSingular: dummyVariableSingular.value,
+    sortBy: sortBy.value,
+    dummyVariableSingularSize: dummyVariableSingularSize.value,
+    ...filters.value,
+}))
+
+fetchAll(params.value)
+
+function handleSortChange(val) {
+    if (val.prop != null && val.order != null) {
+        let sort = val.order.startsWith('a') ? 'asc' : 'desc'
+        sortBy.value = val.prop + ',' + sort
+        fetchAll(params.value)
+    }
+}
+
+function handleAdd() {
+    formTitle.value = 'New DummySingular'
+    formData.value = {}
+    formVisible.value = true
+}
+
+function handleEdit(row) {
+    formTitle.value = 'Edit DummySingular'
+    formData.value = Object.assign({}, row)
+    formVisible.value = true
+}
+
+function handleDelete(row) {
+    ElMessageBox.confirm('This will permanently delete the dummyVariableSingular. Continue?', 'Warning', {
+        type: 'warning'
+    }).then(() => {
+        dummyVariableSingularApi.delete(row.id).then((response) => {
+            ElMessage({
+                message: response.data.message,
+                type: response.data.type
+            })
+            fetchAll(params.value)
+        })
+    })
+}
+
+watch(
+    () => filters.value,
+    val => applySearch(),
+    { deep: true }
+)
+
+const applySearch = _.debounce(() => fetchAll(params.value), 300)
+
+
+function saved() {
+    formVisible.value = false
+    fetchAll(params.value)
+}
+</script>
