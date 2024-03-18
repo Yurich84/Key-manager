@@ -40,8 +40,8 @@ The main goals of the project are:
 - [FontAwesome 6](http://fontawesome.io/icons/) icons
 
 ## Install
-- `git clone https://github.com/Yurich84/laravel-vue3-spa.git`
-- `cd /laravel-vue3-spa`
+- `git clone https://github.com/Yurich84/key-manager.git`
+- `cd /key-manager`
 - `composer install`
 - `cp .env.example .env` - copy .env file
 - set your DB credentials in `.env`
