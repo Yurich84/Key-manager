@@ -7,26 +7,10 @@
 <div align="center">
 
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
-[<img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/Yurich84/laravel-vue3-spa/laravel-unit-testing.yml?branch=main&label=Tests">](https://github.com/Yurich84/laravel-vue3-spa/actions)
-[<img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/Yurich84/laravel-vue3-spa/php-cs-fixer.yml?branch=main&label=CodeStyle">](https://github.com/Yurich84/laravel-vue3-spa/actions)
+[<img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/Yurich84/key-manager/laravel-unit-testing.yml?branch=main&label=Tests">](https://github.com/Yurich84/key-manager/actions)
+[<img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/Yurich84/key-manager/php-cs-fixer.yml?branch=main&label=CodeStyle">](https://github.com/Yurich84/key-manager/actions)
 
 </div>
-
-#### This is a groundwork for a large modular SPA, that utilises Laravel, Vue, ElementPlus. 
-#### CRUD generator is integrated in project creates standalone modules on the frontend and backend.
-
-<p align="center">
-    <img width="100%" src="https://i.imgur.com/VNa5jOg.png" >
-</p>
-
-The main goals of the project are:
-- to avoid high cohesion between modules
-- to form the basis for writing clean code
-- to be easy to expand
-- to avoid code duplication
-- to reduce the start time of the project
-- to reduce the time of project support and code navigation
-- to be understandable for an inexperienced programmer
 
 ## Extensions
 
@@ -112,5 +96,3 @@ This will create:
 > Don't forget run php artisan migrate.
 
 Every module loads dynamically.
-
-## [Video](https://www.youtube.com/watch?v=0qKNlrmhgNg)
