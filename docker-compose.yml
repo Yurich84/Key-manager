@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./_docker/php/Dockerfile
+    image: lara-app
+    container_name: ${APP_NAME:-alfa}-app
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+    volumes:
+      - ./_docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:cached
+      - ./:/application:cached
+    restart: always
+
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb
+    ports:
+      - "8800:8000"
+    volumes:
+      - "./_db:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+
+  nginx:
+    image: nginx:1.17.6-alpine
+    container_name: ${APP_NAME:-alfa}-nginx
+    ports:
+      - "81:80"
+    volumes:
+      - ./_docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+      - ./:/application:cached
+    depends_on:
+      - app
+    restart: always
+
+#  redis:
+#    image: redis:alpine
+#    container_name: ${APP_NAME:-alfa}-redis
+#    ports:
+#      - "6379:6379"
+#    restart: always
+#
+#  queue:
+#    image: lara-app
+#    container_name: ${APP_NAME:-alfa}-queue
+#    command: php artisan queue:work --verbose --tries=3 --timeout=90
+#    depends_on:
+#      - app
+#    volumes:
+#      - ./:/application:cached
+#    restart: always
+#
+#  schedule:
+#    image: lara-app
+#    container_name: ${APP_NAME:-alfa}-schedule
+#    command: php artisan schedule:work
+#    depends_on:
+#      - app
+#    volumes:
+#      - ./:/application:cached
+#    restart: always
+
